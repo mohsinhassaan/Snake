@@ -55,6 +55,20 @@ a = generate_apple()
 
 dir = "r"
 
+screen.fill([64, 64, 64])
+draw_snake()
+draw_apple()
+pygame.display.update()
+
+
+while True:
+    for event in pygame.event.get():
+        if event.type == KEYDOWN and event.key == K_SPACE:
+            break
+    else:
+        continue
+    break
+
 while True:
     lastdir = dir
     for event in pygame.event.get():
