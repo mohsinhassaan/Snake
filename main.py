@@ -135,15 +135,16 @@ while True:
     lastdir = direction
     for event in pygame.event.get():
         if event.type == KEYDOWN:
-            if event.key == K_LEFT and lastdir != "r":
-                direction = "l"
-            elif event.key == K_RIGHT and lastdir != "l":
-                direction = "r"
-            elif event.key == K_DOWN and lastdir != "u":
-                direction = "d"
-            elif event.key == K_UP and lastdir != "d":
-                direction = "u"
-            elif event.key == K_ESCAPE:
+            if not paused:
+                if event.key == K_LEFT and lastdir != "r":
+                    direction = "l"
+                elif event.key == K_RIGHT and lastdir != "l":
+                    direction = "r"
+                elif event.key == K_DOWN and lastdir != "u":
+                    direction = "d"
+                elif event.key == K_UP and lastdir != "d":
+                    direction = "u"
+            if event.key == K_ESCAPE:
                 sys.exit()
             elif event.key == K_r:
                 s = snake(h, w, piece_size)
