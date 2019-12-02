@@ -40,8 +40,8 @@ def generate_apple():
 
 
 def gameover():
-    font = pygame.font.Font(None, 72)
-    text = font.render("GAME OVER", True, (255, 255, 255))
+    font = pygame.font.Font(None, 60)
+    text = font.render("GAME OVER. Press 'r' to restart", True, (255, 255, 255))
     text_rect = text.get_rect()
     text_rect.center = (w // 2, h // 2)
     screen.blit(text, text_rect)
@@ -53,13 +53,14 @@ piece_size = w / 20
 s = snake(w, h, piece_size)
 a = generate_apple()
 
-dir = "r"
+direction = "r"
 
 screen.fill([64, 64, 64])
 draw_snake()
 draw_apple()
 pygame.display.update()
 
+paused = False
 
 while True:
     for event in pygame.event.get():
@@ -70,28 +71,35 @@ while True:
     break
 
 while True:
-    lastdir = dir
+    lastdir = direction
     for event in pygame.event.get():
         if event.type == KEYDOWN:
             if event.key == K_LEFT and lastdir != "r":
-                dir = "l"
+                direction = "l"
             elif event.key == K_RIGHT and lastdir != "l":
-                dir = "r"
+                direction = "r"
             elif event.key == K_DOWN and lastdir != "u":
-                dir = "d"
+                direction = "d"
             elif event.key == K_UP and lastdir != "d":
-                dir = "u"
+                direction = "u"
             elif event.key == K_ESCAPE:
                 sys.exit()
-    if s.alive:
-        eaten = s.move(dir, a)
-        if eaten:
-            a = generate_apple()
-        screen.fill([64, 64, 64])
-        draw_snake()
-        draw_apple()
-    else:
-        gameover()
+            elif event.key == K_r:
+                s = snake(h, w, piece_size)
+                a = generate_apple()
+                direction = "r"
+            elif event.key == K_p:
+                paused = True if paused == False else False
+    if not paused:
+        if s.alive:
+            eaten = s.move(direction, a)
+            if eaten:
+                a = generate_apple()
+            screen.fill([64, 64, 64])
+            draw_snake()
+            draw_apple()
+        else:
+            gameover()
 
-    pygame.display.update()
+        pygame.display.update()
     pygame.time.wait(100)
