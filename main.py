@@ -164,4 +164,4 @@ while True:
             gameover()
 
         pygame.display.update()
-    pygame.time.wait(100)
+    pygame.time.delay(100)
