@@ -29,8 +29,11 @@ def main():
 
     while True:
         for event in pygame.event.get():
-            if event.type == KEYDOWN and event.key == K_SPACE:
-                break
+            if event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    break
+                elif event.key == K_ESCAPE:
+                    sys.exit()
         else:
             continue
         break
