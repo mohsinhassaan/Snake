@@ -72,9 +72,9 @@ def main():
 
 
 class snake(object):
-    def __init__(self, h: int, w: int):
-        self.height = h
+    def __init__(self, w: int, h: int):
         self.width = w
+        self.height = h
         self.pieces = deque([snake_bit((0, 0))])
         self.alive = True
 
