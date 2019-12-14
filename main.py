@@ -119,7 +119,7 @@ class snake(object):
             return None
 
     def __valid_pos(self, pos: tuple, eating: bool):
-        start = 2 if eating else 1
+        start = 1 if eating else 0
 
         for piece in list(self.pieces)[start:]:
             if piece.pos == pos:
@@ -141,10 +141,11 @@ pygame.init()
 
 
 def draw_snake(s: snake):
+    snake_color = (255, 255, 255) if s.alive else (0, 0, 200)
     for piece in s.pieces:
         pygame.draw.rect(
             screen,
-            (255, 255, 255),
+            snake_color,
             pygame.Rect(
                 (piece.pos[0] * piece_size, piece.pos[1] * piece_size),
                 (piece_size, piece_size),
