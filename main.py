@@ -3,20 +3,61 @@ from sys import argv
 from pygame.locals import *
 from random import randint
 from collections import deque
+from itertools import islice
 
 
 def main():
-    if len(argv) > 4 or len(argv) == 2 and (argv[1] == "--help" or argv[1] == "-h"):
-        print(f"Usage: {argv[0]} [width] [height] [pieces]")
-
     global screen, w, h, pieces, piece_size
 
-    w, h = (int(argv[1]), int(argv[2])) if len(argv) >= 3 else (700, 700)
-    pieces = int(argv[3]) if len(argv) == 4 else 20
-    screen = pygame.display.set_mode((w, h))
-    piece_size = w / pieces
-    s = snake(pieces, int((pieces / w) * h))
+    if "-h" in argv or "--help" in argv:
+        print(f"Usage: {argv[0]} [options]")
+        print("-h   --help          Show this help")
+        print(
+            "--height [height]    Set display height (default 600) (does nothing in fulscreen mode)"
+        )
+        print(
+            "--width [width]      Set display width (default 600) (does nothing in fulscreen mode)"
+        )
+        print("--pieces             Set no. of pieces in width (default 20)")
+        print("-f   --fullscreen    Start game in fullscreen mode")
+        sys.exit()
+
+    if "--pieces" in argv:
+        pieces = int(argv[argv.index("--pieces") + 1])
+    else:
+        pieces = 20
+
+    if "--width" in argv:
+        w = int(argv[argv.index("--width") + 1])
+        w = w - (w % pieces)
+    else:
+        w = 700
+
+    if "--height" in argv:
+        h = int(argv[argv.index("--height") + 1])
+        h = h - (h % pieces)
+    else:
+        h = 700
+
+    if "-f" in argv or "--fullscreen" in argv:
+        info_object = pygame.display.Info()
+        piece_size = info_object.current_w // pieces
+        screen = pygame.display.set_mode(
+            (
+                info_object.current_w - (info_object.current_w % piece_size),
+                info_object.current_h - (info_object.current_h % piece_size),
+            ),
+            pygame.FULLSCREEN,
+        )
+        w, h = screen.get_size()
+    else:
+        screen = pygame.display.set_mode((w, h))
+        piece_size = w // pieces
+
+    s = snake(pieces, h / piece_size)
     a = generate_apple(s)
+
+    print(f"w = {s.width}, h = {s.height}")
 
     direction = "r"
 
@@ -24,6 +65,7 @@ def main():
     draw_snake(s)
     draw_apple(a)
     pygame.display.update()
+    print(",".join(map(str, s.pieces)))
 
     paused = False
 
@@ -62,6 +104,7 @@ def main():
         if not paused:
             if s.alive:
                 eaten = s.move(direction, a)
+                print(",".join(map(str, s.pieces)))
                 if eaten:
                     a = generate_apple(s)
                 screen.fill([64, 64, 64])
@@ -93,8 +136,7 @@ class snake(object):
         elif dir == "d":
             pos = (head.pos[0], head.pos[1] + 1)
 
-        collision = self.__wall_collision(pos)
-        pos = collision if collision is not None else pos
+        pos = self.__wall_collision(pos)
 
         eating = True if pos == ap.pos else False
 
@@ -119,12 +161,12 @@ class snake(object):
         elif pos[1] + 1 > self.height:
             return (pos[0], 0)
         else:
-            return None
+            return pos
 
     def __valid_pos(self, pos: tuple, eating: bool):
         start = 1 if eating else 0
 
-        for piece in list(self.pieces)[start:]:
+        for piece in islice(self.pieces, start, len(self.pieces)):
             if piece.pos == pos:
                 return False
         return True
@@ -133,6 +175,9 @@ class snake(object):
 class snake_bit(object):
     def __init__(self, pos):
         self.pos = pos
+
+    def __str__(self):
+        return str(self.pos)
 
 
 class apple(object):
@@ -208,3 +253,4 @@ def gameover():
 
 if __name__ == "__main__":
     main()
+
