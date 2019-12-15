@@ -93,12 +93,12 @@ class snake(object):
         elif dir == "d":
             pos = (head.pos[0], head.pos[1] + 1)
 
+        collision = self.__wall_collision(pos)
+        pos = collision if collision is not None else pos
+
         eating = True if pos == ap.pos else False
 
         if self.__valid_pos(pos, eating):
-            collision = self.__wall_collision(pos)
-            pos = collision if collision is not None else pos
-
             if eating:
                 self.pieces.append(snake_bit(pos))
                 return True
