@@ -7,6 +7,7 @@ from itertools import islice
 
 
 def main():
+    pygame.init()
     global screen, w, h, pieces, piece_size
 
     if "-h" in argv or "--help" in argv:
@@ -57,15 +58,13 @@ def main():
     s = snake(pieces, h / piece_size)
     a = generate_apple(s)
 
-    print(f"w = {s.width}, h = {s.height}")
-
     direction = "r"
 
     screen.fill([64, 64, 64])
+    draw_background()
     draw_snake(s)
     draw_apple(a)
     pygame.display.update()
-    print(",".join(map(str, s.pieces)))
 
     paused = False
 
@@ -104,10 +103,10 @@ def main():
         if not paused:
             if s.alive:
                 eaten = s.move(direction, a)
-                print(",".join(map(str, s.pieces)))
+
                 if eaten:
                     a = generate_apple(s)
-                screen.fill([64, 64, 64])
+                draw_background()
                 draw_snake(s)
                 draw_apple(a)
             else:
@@ -185,11 +184,8 @@ class apple(object):
         self.pos = pos
 
 
-pygame.init()
-
-
 def draw_snake(s: snake):
-    snake_color = (255, 255, 255) if s.alive else (0, 0, 200)
+    snake_color = (47, 139, 211)
     for piece in s.pieces:
         pygame.draw.rect(
             screen,
@@ -199,33 +195,27 @@ def draw_snake(s: snake):
                 (piece_size, piece_size),
             ),
         )
-        pygame.draw.rect(
-            screen,
-            (0, 0, 0),
-            pygame.Rect(
-                (piece.pos[0] * piece_size, piece.pos[1] * piece_size),
-                (piece_size, piece_size),
-            ),
-            1,
-        )
 
 
 def draw_apple(a: apple):
     pygame.draw.rect(
         screen,
-        (200, 0, 0),
+        (226, 64, 50),
         pygame.Rect(
             (a.pos[0] * piece_size, a.pos[1] * piece_size), (piece_size, piece_size)
         ),
     )
-    pygame.draw.rect(
-        screen,
-        (0, 0, 0),
-        pygame.Rect(
-            (a.pos[0] * piece_size, a.pos[1] * piece_size), (piece_size, piece_size)
-        ),
-        1,
-    )
+
+
+def draw_background():
+    for y in range(0, h // piece_size):
+        for x in range(0, w // piece_size):
+            col = (31, 41, 54) if (x + y) % 2 == 0 else (38, 52, 69)
+            pygame.draw.rect(
+                screen,
+                col,
+                pygame.Rect((x * piece_size, y * piece_size), (piece_size, piece_size)),
+            )
 
 
 def generate_apple(s: snake):
