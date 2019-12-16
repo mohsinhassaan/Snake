@@ -45,6 +45,8 @@ def main():
         screen = pygame.display.set_mode((w, h))
         piece_size = w // pieces
 
+    player_game()
+
 
 def player_game():
     global s, a, direction, paused

@@ -1,5 +1,5 @@
 from collections import deque
-from typing import *
+from typing import Deque, Tuple
 
 
 class apple(object):
