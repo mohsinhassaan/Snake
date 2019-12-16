@@ -3,7 +3,6 @@ from sys import argv
 from pygame.locals import *
 from random import randint
 from objects import snake, apple
-from ai import ai_game
 
 
 def main():
@@ -45,16 +44,6 @@ def main():
     else:
         screen = pygame.display.set_mode((w, h))
         piece_size = w // pieces
-
-    if "--ai" in argv:
-        mode = "ai"
-    else:
-        mode = "player"
-
-    if mode == "player":
-        player_game()
-    elif mode == "ai":
-        ai_game(w, h, pieces, piece_size)
 
 
 def player_game():
