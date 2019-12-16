@@ -1,3 +1,6 @@
+from collections import deque
+
+
 class snake(object):
     def __init__(self, w: int, h: int):
         self.width = w
@@ -47,7 +50,7 @@ class snake(object):
     def __valid_pos(self, pos: tuple, eating: bool):
         start = 1 if eating else 0
 
-        for piece in islice(self.pieces, start, len(self.pieces)):
+        for piece in self.pieces:
             if piece.pos == pos:
                 return False
         return True
