@@ -2,9 +2,8 @@ import pygame, sys
 from sys import argv
 from pygame.locals import *
 from random import randint
-from collections import deque
-from itertools import islice
 from objects import snake, apple
+from ai import ai_game
 
 
 def main():
@@ -12,16 +11,7 @@ def main():
     global screen, w, h, pieces, piece_size
 
     if "-h" in argv or "--help" in argv:
-        print(f"Usage: {argv[0]} [options]")
-        print("-h   --help          Show this help")
-        print(
-            "--height [height]    Set display height (default 600) (does nothing in fulscreen mode)"
-        )
-        print(
-            "--width [width]      Set display width (default 600) (does nothing in fulscreen mode)"
-        )
-        print("--pieces             Set no. of pieces in width (default 20)")
-        print("-f   --fullscreen    Start game in fullscreen mode")
+        print_help()
         sys.exit()
 
     if "--pieces" in argv:
@@ -56,16 +46,25 @@ def main():
         screen = pygame.display.set_mode((w, h))
         piece_size = w // pieces
 
+    if "--ai" in argv:
+        mode = "ai"
+    else:
+        mode = "player"
+
+    if mode == "player":
+        player_game()
+    elif mode == "ai":
+        ai_game(w, h, pieces, piece_size)
+
+
+def player_game():
+    global s, a, direction, paused
     s = snake(pieces, h / piece_size)
     a = generate_apple(s)
 
     direction = "r"
 
-    screen.fill([64, 64, 64])
-    draw_background()
-    draw_snake(s)
-    draw_apple(a)
-    pygame.display.update()
+    draw(s, a)
 
     paused = False
 
@@ -81,40 +80,63 @@ def main():
         break
 
     while True:
-        lastdir = direction
-        for event in pygame.event.get():
-            if event.type == KEYDOWN:
-                if not paused:
-                    if event.key == K_LEFT and lastdir != "r":
-                        direction = "l"
-                    elif event.key == K_RIGHT and lastdir != "l":
-                        direction = "r"
-                    elif event.key == K_DOWN and lastdir != "u":
-                        direction = "d"
-                    elif event.key == K_UP and lastdir != "d":
-                        direction = "u"
-                if event.key == K_ESCAPE:
-                    sys.exit()
-                elif event.key == K_r:
-                    s = snake(pieces, int((pieces / w) * h))
-                    a = generate_apple(s)
-                    direction = "r"
-                elif event.key == K_p:
-                    paused = True if paused == False else False
+        handle_key()
         if not paused:
             if s.alive:
                 eaten = s.move(direction, a)
-
                 if eaten:
                     a = generate_apple(s)
-                draw_background()
-                draw_snake(s)
-                draw_apple(a)
+                draw(s, a)
             else:
                 gameover()
-
             pygame.display.update()
         pygame.time.delay(100)
+
+
+def handle_key():
+    global s, a, direction, paused
+    lastdir = direction
+    for event in pygame.event.get():
+        if event.type == KEYDOWN:
+            if not paused:
+                if event.key == K_LEFT and lastdir != "r":
+                    direction = "l"
+                elif event.key == K_RIGHT and lastdir != "l":
+                    direction = "r"
+                elif event.key == K_DOWN and lastdir != "u":
+                    direction = "d"
+                elif event.key == K_UP and lastdir != "d":
+                    direction = "u"
+            if event.key == K_ESCAPE:
+                sys.exit()
+            elif event.key == K_r:
+                s = snake(pieces, int((pieces / w) * h))
+                a = generate_apple(s)
+                direction = "r"
+            elif event.key == K_p:
+                paused = True if paused == False else False
+
+
+def print_help():
+    print(f"Usage: {argv[0]} [options]")
+    print()
+    print("-h   --help          Show this help")
+    print(
+        "--height [height]    Set display height (default 600) (does nothing in fulscreen mode)"
+    )
+    print(
+        "--width [width]      Set display width (default 600) (does nothing in fulscreen mode)"
+    )
+    print("--pieces             Set no. of pieces in width (default 20)")
+    print("-f   --fullscreen    Start game in fullscreen mode")
+    print("--ai                 AI player")
+
+
+def draw(s: snake, a: apple):
+    draw_background()
+    draw_snake(s)
+    draw_apple(a)
+    pygame.display.update()
 
 
 def draw_snake(s: snake):
