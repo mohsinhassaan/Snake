@@ -132,7 +132,9 @@ def draw(s: snake, a: apple):
 
 def draw_snake(s: snake):
     snake_color = (47, 139, 211)
-    for piece in s.pieces:
+    border_color = (0, 0, 0)
+    snake_pieces = list(s.pieces)
+    for i, piece in enumerate(snake_pieces):
         pygame.draw.rect(
             screen,
             snake_color,
@@ -141,6 +143,36 @@ def draw_snake(s: snake):
                 (piece_size, piece_size),
             ),
         )
+        next_pos = snake_pieces[i + 1].pos if i + 1 < len(snake_pieces) else (-1, -1)
+        prev_pos = snake_pieces[i - 1].pos if i > 0 else (-1, -1)
+
+        if next_pos[0] != piece.pos[0] - 1 and prev_pos[0] != piece.pos[0] - 1:
+            draw_border(piece, "l", border_color)
+
+        if next_pos[0] != piece.pos[0] + 1 and prev_pos[0] != piece.pos[0] + 1:
+            draw_border(piece, "r", border_color)
+
+        if next_pos[1] != piece.pos[1] - 1 and prev_pos[1] != piece.pos[1] - 1:
+            draw_border(piece, "u", border_color)
+
+        if next_pos[1] != piece.pos[1] + 1 and prev_pos[1] != piece.pos[1] + 1:
+            draw_border(piece, "d", border_color)
+
+
+def draw_border(piece, dir, border_color):
+    if dir == "l":
+        pos = (piece.pos[0] * piece_size, piece.pos[1] * piece_size)
+        size = (1, piece_size)
+    elif dir == "u":
+        pos = (piece.pos[0] * piece_size, piece.pos[1] * piece_size)
+        size = (piece_size, 1)
+    elif dir == "r":
+        pos = (piece.pos[0] * piece_size + piece_size - 1, piece.pos[1] * piece_size)
+        size = (1, piece_size)
+    elif dir == "d":
+        pos = (piece.pos[0] * piece_size, piece.pos[1] * piece_size + piece_size - 1)
+        size = (piece_size, 1)
+    pygame.draw.rect(screen, border_color, pygame.Rect(pos, size))
 
 
 def draw_apple(a: apple):
@@ -150,6 +182,14 @@ def draw_apple(a: apple):
         pygame.Rect(
             (a.pos[0] * piece_size, a.pos[1] * piece_size), (piece_size, piece_size)
         ),
+    )
+    pygame.draw.rect(
+        screen,
+        (0, 0, 0),
+        pygame.Rect(
+            (a.pos[0] * piece_size, a.pos[1] * piece_size), (piece_size, piece_size)
+        ),
+        1,
     )
 
 
