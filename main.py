@@ -143,8 +143,8 @@ def draw_snake(s: snake):
                 (piece_size, piece_size),
             ),
         )
-        next_pos = snake_pieces[i + 1].pos if i + 1 < len(snake_pieces) else (-1, -1)
-        prev_pos = snake_pieces[i - 1].pos if i > 0 else (-1, -1)
+        next_pos = snake_pieces[i + 1].pos if i + 1 < len(snake_pieces) else (None, None)
+        prev_pos = snake_pieces[i - 1].pos if i > 0 else (None, None)
 
         if next_pos[0] != piece.pos[0] - 1 and prev_pos[0] != piece.pos[0] - 1:
             draw_border(piece, "l", border_color)
