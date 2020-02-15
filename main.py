@@ -143,7 +143,9 @@ def draw_snake(s: snake):
                 (piece_size, piece_size),
             ),
         )
-        next_pos = snake_pieces[i + 1].pos if i + 1 < len(snake_pieces) else (None, None)
+        next_pos = (
+            snake_pieces[i + 1].pos if i + 1 < len(snake_pieces) else (None, None)
+        )
         prev_pos = snake_pieces[i - 1].pos if i > 0 else (None, None)
 
         if next_pos[0] != piece.pos[0] - 1 and prev_pos[0] != piece.pos[0] - 1:
